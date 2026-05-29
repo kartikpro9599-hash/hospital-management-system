@@ -29,7 +29,7 @@ function LoginCard(props) {
 
     return (
         <div class="container">
-            <h1>{props.head}</h1>
+            <h1>Login Form</h1>
             <form onSubmit={handleSubmit} method="post">
                 <div class= "username">
                     <label for="name">Username</label>
