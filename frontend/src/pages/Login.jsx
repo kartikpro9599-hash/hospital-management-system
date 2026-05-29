@@ -2,7 +2,7 @@ import UserLogin from "../components/LoginCard";
 
 function Login(props) { 
     return (
-        <UserLogin head={props.back} url={props.url} />
+        <UserLogin url={props.url} />
     );
 }
 export default Login;
