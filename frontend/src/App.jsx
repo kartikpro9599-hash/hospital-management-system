@@ -1,13 +1,14 @@
+import Login from "../src/pages/Login";
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 function App() {
-  const backendUrl = 'http://localhost:5000/patients';
+  const backendUrl = 'http://localhost:5000';
 
   const [backendData,setBackendData] = useState("");
   useEffect(() => {
 
-    axios.get(backendUrl)
+    axios.get(`${backendUrl}/patients`)
       .then((res) => {
         console.log(res.data);
         setBackendData(res.data);
@@ -19,7 +20,7 @@ function App() {
   }, []);
 
   return (
-    <h1>{backendData}</h1>
+    <Login back={backendData} url={`${backendUrl}/patients/submit-data`} />
   )
 }
 
