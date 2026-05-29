@@ -27,7 +27,6 @@ app.get('/patients', async (req, res) => {
 });
 
 app.post("/patients/submit-data", async (req, res) => {
-    console.log(req.body);
     res.status(200).json({
         success: true,
         message: "Login successful",
