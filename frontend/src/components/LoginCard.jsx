@@ -1,11 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function LoginCard(props) {
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [status, setStatus] = useState("");
-
     function handleChange(e) {
         if (e.target.name === "username") {
             setUsername(e.target.value);
@@ -20,42 +20,47 @@ function LoginCard(props) {
                 username,
                 password,
             });
-            setStatus(res.data.message);
+            if (res.data.success) {
+                localStorage.setItem("isLoggedIn", "true");
+                localStorage.setItem("username", username);
+                navigate("/");
+            }
         } catch (error) {
             console.log(error);
         }
-
     }
-
     return (
-        <div class="container">
+        <div className="container">
             <h1>Login Form</h1>
             <form onSubmit={handleSubmit} method="post">
-                <div class= "username">
-                    <label for="name">Username</label>
+                <div className= "username">
+                    <label htmlFor="username">Username</label>
                     <input
+                        id="username"
                         type="text"
                         name="username"
                         placeholder="Enter your name"
                         value={username}
+                        autoComplete="username"
                         required
                         onChange={handleChange}
                     />
                 </div>
-                <div class="password">
-                    <label for="password">Password</label>
+                <div className="password">
+                    <label htmlFor="password">Password</label>
                     <input
-                        type="text"
+                        id="password"
+                        type="password"
                         name="password"
                         placeholder="Enter your password"
+                        autoComplete ="current-password"
                         value={password}
                         required
                         onChange={handleChange}
                     />
                 </div>
-            <button type="submit">submit</button>
+                <button type="submit">submit</button>
             </form>
-            <p>{status}</p>
         </div>    
     )
 
