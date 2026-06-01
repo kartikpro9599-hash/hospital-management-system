@@ -6,7 +6,9 @@ function LoginCard(props) {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const loginType = localStorage.getItem("loginType");
     function handleChange(e) {
+        //hooks of username and password
         if (e.target.name === "username") {
             setUsername(e.target.value);
         } else { 
@@ -14,11 +16,13 @@ function LoginCard(props) {
         }
     }
    async function handleSubmit(e) { 
-        e.preventDefault();
+       e.preventDefault();
+       //submit the data to backend
         try {
             const res = await axios.post(props.url, {
                 username,
                 password,
+                loginType,
             });
             if (res.data.success) {
                 localStorage.setItem("isLoggedIn", "true");
@@ -26,12 +30,12 @@ function LoginCard(props) {
                 navigate("/");
             }
         } catch (error) {
-            console.log(error);
+            alert(error.response?.data?.message || "Login failed");
         }
     }
     return (
         <div className="container">
-            <h1>Login Form</h1>
+            <h2>Login form for {loginType}</h2>
             <form onSubmit={handleSubmit} method="post">
                 <div className= "username">
                     <label htmlFor="username">Username</label>
