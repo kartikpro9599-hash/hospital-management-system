@@ -7,12 +7,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/" //paths for ui
           element={<Home/>}
         />
         <Route
-          path="/login"
-          element={<Login url={`${backendUrl}/patients/submit-data`} />}
+          path="/login" //login path
+          element={<Login url={`${backendUrl}/login`} />} //backend url
         />
       </Routes>
     </BrowserRouter>
