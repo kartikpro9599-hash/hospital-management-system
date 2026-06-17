@@ -1,16 +1,20 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/api";
 
-function LoginCard() {
+function CreateAccCard() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const loginType = localStorage.getItem("loginType");
+    const [cnfPassword, setcnfPassword] = useState("");
+    const passwordMatch = cnfPassword.length > 0 && password.length > 0 && password === cnfPassword;
+    //returns boolean data type
+    const createPatient = location.pathname === "/create-account";
     const data = {
         username,
         password,
-        loginType,
+        ...(createPatient && { cnfPassword }),
     }
     function handleChange(e) {
         //hooks of username and password
@@ -19,22 +23,28 @@ function LoginCard() {
             setUsername(value);
         } else if (name === "password") {
             setPassword(value);
+        } else if (name === "cnfPassword") {
+            setcnfPassword(value);
         }
     }
-    function createAcc() {
+    function handleCancel() {
         //create new account using value
         setUsername("");
         setPassword("");
-        navigate("/create-account");
+        setcnfPassword("");
+        navigate("/login");
     }
-
 
     async function handleSubmit(e) {
         e.preventDefault();
-        //prevent submit without match
+        //prevent submit without match 
+        if (createPatient && !passwordMatch) {
+            alert("Passwords do not match");
+            return;
+        }
         //submit the data to backend
         try {
-            const req = await api.post(("/login"), data);
+            const req = await api.post(("/create-account"), data);
             if (req.data.success) {
                 localStorage.setItem("isLoggedIn", "true");
                 localStorage.setItem("username", username);
@@ -46,7 +56,8 @@ function LoginCard() {
     }
     return (
         <div className="container">
-            <h2>Login form for {loginType}</h2>
+            <h2>Create account for Patient</h2>
+
             <form onSubmit={handleSubmit} method="post">
                 <div className="username">
                     <label htmlFor="username">Username</label>
@@ -61,6 +72,7 @@ function LoginCard() {
                         onChange={handleChange}
                     />
                 </div>
+
                 <div className="password">
                     <label htmlFor="password">Password</label>
                     <input
@@ -68,18 +80,33 @@ function LoginCard() {
                         type="password"
                         name="password"
                         placeholder="Enter your password"
-                        autoComplete ="current-password"
+                        autoComplete="new-password"
                         value={password}
                         required
                         onChange={handleChange}
                     />
                 </div>
+
+                <div className="password">
+                    <label htmlFor="cnfPassword">Confirm Password</label>
+                    <input
+                        id="cnfPassword"
+                        type="password"
+                        name="cnfPassword"
+                        placeholder="Enter your password"
+                        value={cnfPassword}
+                        autoComplete="new-password"
+                        required
+                        onChange={handleChange}
+                    />
+                </div>
+                {createPatient && cnfPassword.length > 0 && (passwordMatch ? <p>password match</p> : <p>password does not match</p>)}
                 <button type="submit">submit</button>
-                <button type="button" onClick={createAcc}>Create an account</button>
+                <button type="button" onClick={handleCancel}>cancel</button>
             </form>
         </div>
     )
 
 }
 
-export default LoginCard;
+export default CreateAccCard;
