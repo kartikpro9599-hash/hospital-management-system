@@ -1,17 +1,18 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import UserLogin from "../components/LoginCard"
+import { Navigate } from "react-router-dom";
+import LoginCard from "../components/LoginCard";
 
-function Login(props) {
-    const navigate = useNavigate();
+function Login() {
+    const loginType = localStorage.getItem("loginType");
+    const isLogIn = localStorage.getItem("isLoggedIn") === "true";
 
-    useEffect(() => { //remove direct access of /login route for role set 
-        const loginType = localStorage.getItem("loginType");
-        if (!loginType) {
-            navigate("/", { replace: true });
-        }
-    }, [navigate]);
-    return <UserLogin url={props.url} />;
+    if (!loginType) {
+        return <Navigate to="/" replace />;
+    }
+    if (isLogIn) {
+        return <Navigate to="/profile" replace />
+    }
+
+    return <LoginCard />;
 }
 
 export default Login;

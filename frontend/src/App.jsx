@@ -1,8 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./routes/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import CreateAccPage from "./pages/CreateAccount";
+import Profile from "./pages/Profile";
+
 function App() {
-  const backendUrl = 'http://localhost:5000';
   return (
     <BrowserRouter>
       <Routes>
@@ -12,7 +15,19 @@ function App() {
         />
         <Route
           path="/login" //login path
-          element={<Login url={`${backendUrl}/login`} />} //backend url
+          element={<Login />} //backend url
+        />
+        <Route
+          path="/create-account" //login path
+          element={<CreateAccPage />} //backend url
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </BrowserRouter>
