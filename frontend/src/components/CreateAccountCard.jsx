@@ -1,44 +1,47 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 
 function CreateAccCard() {
     const navigate = useNavigate();
-    const location = useLocation();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [cnfPassword, setcnfPassword] = useState("");
-    const passwordMatch = cnfPassword.length > 0 && password.length > 0 && password === cnfPassword;
-    //returns boolean data type
-    const createPatient = location.pathname === "/create-account";
-    const data = {
-        username,
-        password,
-        ...(createPatient && { cnfPassword }),
+    const initialFormValue = {
+        fName: "",
+        lName: "",
+        username: "",
+        age: "",
+        gender: "",
+        phoneNo: "",
+        email: "",
+        password: "",
+        cnfPassword: ""
     }
+    const [myFormData, setMyForm] = useState(initialFormValue);
+    const passwordMatch = myFormData.cnfPassword.length > 0 && myFormData.password === myFormData.cnfPassword;
+    //returns boolean data type
     function handleChange(e) {
-        //hooks of username and password
+        //hooks of form data
         const { name, value } = e.target;
-        if (name === "username") {
-            setUsername(value);
-        } else if (name === "password") {
-            setPassword(value);
-        } else if (name === "cnfPassword") {
-            setcnfPassword(value);
-        }
+        setMyForm(prev => ({
+            ...prev,
+            [name]: value,
+        }));
     }
     function handleCancel() {
-        //create new account using value
-        setUsername("");
-        setPassword("");
-        setcnfPassword("");
+        //on click the btn cancel return to login page
+        setMyForm(initialFormValue);
         navigate("/login");
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
+        const data = {
+            ...myFormData,
+            age: Number(myFormData.age),
+            phoneNo: Number(myFormData.phoneNo)
+        }
+        console.log(data);
         //prevent submit without match 
-        if (createPatient && !passwordMatch) {
+        if (!passwordMatch) {
             alert("Passwords do not match");
             return;
         }
@@ -47,11 +50,12 @@ function CreateAccCard() {
             const req = await api.post(("/create-account"), data);
             if (req.data.success) {
                 localStorage.setItem("isLoggedIn", "true");
-                localStorage.setItem("username", username);
+                localStorage.setItem("username", myFormData.username);
                 navigate("/profile");
             }
         } catch (error) {
-            alert(error.response?.data?.message || "Login failed");
+            //optional chaining for clean error
+            alert(error.response?.data?.message || "Account creation failed");
         }
     }
     return (
@@ -59,21 +63,100 @@ function CreateAccCard() {
             <h2>Create account for Patient</h2>
 
             <form onSubmit={handleSubmit} method="post">
-                <div className="username">
-                    <label htmlFor="username">Username</label>
+
+                <label htmlFor="fName">First Name</label>
+                <input
+                    id="fName"
+                    type="text"
+                    name="fName"
+                    placeholder="Enter your First name"
+                    value={myFormData.fName}
+                    required
+                    onChange={handleChange}
+                />
+                <br />
+                <label htmlFor="lName">Last Name</label>
+                <input
+                    id="lName"
+                    type="text"
+                    name="lName"
+                    placeholder="Enter your First name"
+                    value={myFormData.lName}
+                    required
+                    onChange={handleChange}
+                />
+                <br />
+
+                <label htmlFor="username">Username</label>
                     <input
                         id="username"
                         type="text"
                         name="username"
-                        placeholder="Enter your name"
-                        value={username}
+                        placeholder="Enter the username"
+                        value={myFormData.username}
                         autoComplete="username"
                         required
                         onChange={handleChange}
-                    />
-                </div>
+                />
+                <br />
 
-                <div className="password">
+                <label htmlFor="age">Enter Your age</label>
+                <input
+                    id="age"
+                    type="number"
+                    min="1"
+                    max="100"
+                    name="age"
+                    placeholder="Enter your age"
+                    value={myFormData.age}
+                    required
+                    onChange={handleChange}
+                />
+                <br />
+
+                <label htmlFor="gender">
+                    Choose Your Gender
+                    <select name="gender" id="gender" value={myFormData.gender} onChange={handleChange} required>
+                        <option value="" disabled>choose your gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Transgender">Transgender</option>
+                    </select>
+                </label>
+                <br />
+
+                <label htmlFor="phoneNo">Enter Your phone Number</label>
+                <input
+                    id="phoneNo"
+                    type="tel"
+                    pattern="[0-9]{10}"
+                    name="phoneNo"
+                    placeholder="Enter your phone Number"
+                    value={myFormData.phoneNo}
+                    required
+                    onChange={e => {
+                        //search this technique using google(stackoverflow) and learn for patterns here input will only will be a number
+                        const inputOnlyNumber = e.target.value.replace(/\D/g, "");
+                        setMyForm(prev => ({
+                            ...prev,
+                            phoneNo: inputOnlyNumber
+                        }))
+                    }}
+                />
+                <br />
+
+                <label htmlFor="email">Enter Your Email</label>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    placeholder="Enter your phone Email"
+                    value={myFormData.email}
+                    required
+                    onChange={handleChange}
+                />
+                <br />
+
                     <label htmlFor="password">Password</label>
                     <input
                         id="password"
@@ -81,26 +164,26 @@ function CreateAccCard() {
                         name="password"
                         placeholder="Enter your password"
                         autoComplete="new-password"
-                        value={password}
+                        value={myFormData.password}
                         required
                         onChange={handleChange}
-                    />
-                </div>
-
-                <div className="password">
+                />
+                <br />
                     <label htmlFor="cnfPassword">Confirm Password</label>
                     <input
                         id="cnfPassword"
                         type="password"
                         name="cnfPassword"
                         placeholder="Enter your password"
-                        value={cnfPassword}
+                        value={myFormData.cnfPassword}
                         autoComplete="new-password"
                         required
                         onChange={handleChange}
-                    />
-                </div>
-                {createPatient && cnfPassword.length > 0 && (passwordMatch ? <p>password match</p> : <p>password does not match</p>)}
+                />
+                <br />
+                {myFormData.cnfPassword.length > 0 && (passwordMatch ? <p>password match</p> : <p>password does not match</p>)}
+                <br />
+
                 <button type="submit">submit</button>
                 <button type="button" onClick={handleCancel}>cancel</button>
             </form>
