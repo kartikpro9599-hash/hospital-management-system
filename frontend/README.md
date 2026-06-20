@@ -1,16 +1,15 @@
-# React + Vite
+# Hospital Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a Hospital Management System that includes three types of user roles:
 
-Currently, two official plugins are available:
+* **Patient**: Access patient-related services and functionalities.
+* **Doctor**: Manage doctor-related tasks and services where they can see the patient details.
+* **Admin**: Control and manage the other role like patient and doctor.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project is being built as part of my learning journey. I am taking the time to understand concepts first by watching some tutorial, documentation etc. and then implement them practically.
 
-## React Compiler
+this project is to strengthen my knowledge by building everything from scratch without relying on AI codde.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This repository will be reguraly updated as i continue developing and improving the system.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Thank you for checking out this project!
