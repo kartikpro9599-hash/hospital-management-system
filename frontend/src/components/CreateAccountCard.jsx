@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
+import isWhitelisted from "../components/utils/whitelisting_email.domain"
 
 function CreateAccCard() {
     const navigate = useNavigate();
@@ -42,8 +43,10 @@ function CreateAccCard() {
         console.log(data);
         //prevent submit without match 
         if (!passwordMatch) {
-            alert("Passwords do not match");
-            return;
+            return alert("Passwords do not match");
+        }
+        if (!isWhitelisted(myFormData.email)) {
+            return alert("Please enter the correct email or use your personal email providers like @google,@outlook, etc");
         }
         //submit the data to backend
         try {
