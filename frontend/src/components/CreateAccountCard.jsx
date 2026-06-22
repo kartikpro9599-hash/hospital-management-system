@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
-import isWhitelisted from "../components/utils/whitelisting_email.domain"
-
+import isWhitelisted from "../../../shared/whitelisting_email.domain"
+import { createAccountValidator } from "../../../shared/validator.js"
 function CreateAccCard() {
     const navigate = useNavigate();
     const initialFormValue = {
@@ -38,12 +38,20 @@ function CreateAccCard() {
         const data = {
             ...myFormData,
             age: Number(myFormData.age),
-            phoneNo: Number(myFormData.phoneNo)
-        }
-        console.log(data);
+        };
+
         //prevent submit without match 
-        if (!passwordMatch) {
-            return alert("Passwords do not match");
+        const { error } = createAccountValidator.safeParse(data);
+        if (error) {
+            // console.log("error is :", error);
+            // console.log(success);
+            // console.log(success.error);
+            // console.log(error.ZodError);
+
+            console.log(error.issues)
+            const errors = error.issues[0].message;
+            return alert(errors)
+
         }
         if (!isWhitelisted(myFormData.email)) {
             return alert("Please enter the correct email or use your personal email providers like @google,@outlook, etc");
@@ -121,9 +129,9 @@ function CreateAccCard() {
                     Choose Your Gender
                     <select name="gender" id="gender" value={myFormData.gender} onChange={handleChange} required>
                         <option value="" disabled>choose your gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Transgender">Transgender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="transgender">Transgender</option>
                     </select>
                 </label>
                 <br />
