@@ -1,11 +1,11 @@
 import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import pg from 'pg';
+import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import db from "./db.js";
+import { createAccountValidator } from "../shared/validator.js";
+import isWhitelisted from "../shared/whitelisting_email.domain.js";
 
-dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const allowedOrigins = ["http://localhost:5173"];
@@ -24,20 +24,6 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-const db = new pg.Client({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST,
-  database: process.env.PG_DATABASE,
-  password: process.env.PG_PASSWORD,
-  port: process.env.PG_PORT,
-});
-
-db.connect()
-  .then(() => console.log("Connected to PostgreSQL database"))
-  .catch((err) =>
-    console.error("Error connecting to PostgreSQL database:", err),
-  );
 
 app.get("/", async (req, res) => {
   res.json({
@@ -72,38 +58,42 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+
 app.post("/create-account", async (req, res) => {
   console.log(req.body);
-  const { username, password, loginType, cnfPassword } = req.body;
-  if (
-    cnfPassword === undefined ||
-    typeof username !== "string" ||
-    typeof password !== "string" ||
-    username.trim() === "" ||
-    password.trim() === ""
-  ) {
+  const { password, email } = req.body;
+
+  const { data, error } = createAccountValidator.safeParse(req.body);
+  console.log(data);
+
+  if (error) {
     console.log("values are missing or user done a browser manipulation");
     return res.status(400).json({
       success: false,
-      message: "Values are missing",
+      message: error.issues[0].message,
     });
   }
-  if (password !== cnfPassword) {
-    console.log("account creation request false");
+
+  if (!isWhitelisted(email)) {
+    console.log("email is invalid, user done a browser manipulation");
     return res.status(400).json({
       success: false,
-      message: "Password does not match",
+      message:
+        "email is invalid please use personal email providers like google, live, yahoo, etc",
     });
   }
+
   console.log("account creation request true");
-  bcrypt.hash(cnfPassword + pepper, 10, function (err, hash) {
+
+  const hash = await bcrypt.hash(password + pepper, 10, function (err, hash) {
     if (err) console.log(err);
     console.log(hash);
     // Store hash in your password DB.
   });
+
   return res.status(200).json({
     success: true,
-    message: "login successful",
+    message: "Account Created Succesfully",
   });
 });
 app.listen(PORT, () => {  console.log(`Server running on port ${PORT}`); });
