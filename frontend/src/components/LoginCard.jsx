@@ -1,48 +1,57 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
+import { loginAccountValidator } from "../../../shared/validator.js"
 
 function LoginCard() {
     const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const [stopSpam, setstopSpam] = useState(false);
+    const initialFormValue = {
+        username: "",
+        password: ""
+    };
+    const [myForm, setMyForm] = useState(initialFormValue);
     const loginType = localStorage.getItem("loginType");
-    const data = {
-        username,
-        password,
-        loginType,
-    }
+
     function handleChange(e) {
         //hooks of username and password
         const { name, value } = e.target;
-        if (name === "username") {
-            setUsername(value);
-        } else if (name === "password") {
-            setPassword(value);
-        }
+        setMyForm(prev => ({
+            ...prev,
+            [name]: value,
+        }));
     }
     function createAcc() {
-        //create new account using value
-        setUsername("");
-        setPassword("");
+        //create new account
+        setMyForm(initialFormValue);
         navigate("/create-account");
     }
 
-
     async function handleSubmit(e) {
         e.preventDefault();
+        const data = {
+            ...myForm,
+            loginType,
+        }
+        const { error } = loginAccountValidator.safeParse(data);
+        if (error) {
+            console.log(error.issues)
+            const errors = error.issues[0].message;
+            return alert(errors)
+        }
         //prevent submit without match
         //submit the data to backend
         try {
+            setstopSpam(true);
             const req = await api.post(("/login"), data);
             if (req.data.success) {
                 localStorage.setItem("isLoggedIn", "true");
-                localStorage.setItem("username", username);
+                localStorage.setItem("username", data.username);
                 navigate("/profile");
             }
         } catch (error) {
             alert(error.response?.data?.message || "Login failed");
-        }
+        } finally { setstopSpam(false); }
     }
     return (
         <div className="container">
@@ -55,7 +64,7 @@ function LoginCard() {
                         type="text"
                         name="username"
                         placeholder="Enter your name"
-                        value={username}
+                        value={myForm.username}
                         autoComplete="username"
                         required
                         onChange={handleChange}
@@ -69,13 +78,14 @@ function LoginCard() {
                         name="password"
                         placeholder="Enter your password"
                         autoComplete ="current-password"
-                        value={password}
+                        value={myForm.password}
                         required
                         onChange={handleChange}
                     />
                 </div>
-                <button type="submit">submit</button>
-                <button type="button" onClick={createAcc}>Create an account</button>
+                {!stopSpam && <button type="button" onClick={() => navigate("/")}>cancel</button>}
+                <button type="submit" disabled={stopSpam}>{stopSpam ? "Checking your credentials" : "submit"}</button>
+                {loginType === "patient" && <button type="button" onClick={createAcc}>Create an account</button>}
             </form>
         </div>
     )

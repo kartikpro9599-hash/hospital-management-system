@@ -5,6 +5,7 @@ import isWhitelisted from "../../../shared/whitelisting_email.domain"
 import { createAccountValidator } from "../../../shared/validator.js"
 function CreateAccCard() {
     const navigate = useNavigate();
+    const [stopSpam, setstopSpam] = useState(false);
     const initialFormValue = {
         fName: "",
         lName: "",
@@ -58,6 +59,8 @@ function CreateAccCard() {
         }
         //submit the data to backend
         try {
+            setstopSpam(true); // i see during security check in console that i tap multiple time submit its a spam
+
             const req = await api.post(("/create-account"), data);
             if (req.data.success) {
                 localStorage.setItem("isLoggedIn", "true");
@@ -67,7 +70,7 @@ function CreateAccCard() {
         } catch (error) {
             //optional chaining for clean error
             alert(error.response?.data?.message || "Account creation failed");
-        }
+        } finally { setstopSpam(false); }
     }
     return (
         <div className="container">
@@ -195,8 +198,9 @@ function CreateAccCard() {
                 {myFormData.cnfPassword.length > 0 && (passwordMatch ? <p>password match</p> : <p>password does not match</p>)}
                 <br />
 
-                <button type="submit">submit</button>
-                <button type="button" onClick={handleCancel}>cancel</button>
+                {!stopSpam && <button type="button" onClick={handleCancel} disabled={stopSpam}>cancel</button>}
+                <button type="submit" disabled={stopSpam}>{stopSpam ? "Please wait ..." : "submit"}</button>
+
             </form>
         </div>
     )
