@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/api";
-import isWhitelisted from "../../../shared/whitelisting_email.domain"
+import api from "../api/api.js";
+import isWhitelisted from "../../../shared/whitelisting_email.domain.js"
 import { createAccountValidator } from "../../../shared/validator.js"
 function CreateAccCard() {
     const navigate = useNavigate();
@@ -65,7 +65,7 @@ function CreateAccCard() {
             if (req.data.success) {
                 localStorage.setItem("isLoggedIn", "true");
                 localStorage.setItem("username", myFormData.username);
-                navigate("/profile");
+                navigate("/dashboard");
             }
         } catch (error) {
             //optional chaining for clean error

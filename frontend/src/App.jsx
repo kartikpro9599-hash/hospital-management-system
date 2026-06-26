@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./routes/ProtectedRoute";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import CreateAccPage from "./pages/CreateAccount";
-import Profile from "./pages/Profile";
+import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import Home from "./pages/Home.jsx";
+import Login from "./pages/Login.jsx";
+import CreateAccPage from "./pages/CreateAccount.jsx";
+import DashBoard from "./pages/DashBoard.jsx";
 
 function App() {
   return (
@@ -22,10 +22,10 @@ function App() {
           element={<CreateAccPage />} //backend url
         />
         <Route
-          path="/profile"
+          path="/dashboard"
           element={
             <ProtectedRoute>
-              <Profile />
+              <DashBoard />
             </ProtectedRoute>
           }
         />

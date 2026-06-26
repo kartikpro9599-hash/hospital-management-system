@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import ProfileCard from "../components/ProfileCard";
+import ProfileCard from "../components/ProfileCard.jsx";
 import { useNavigate } from "react-router-dom";
 
-function Profile() {
+function DashBoard() {
     const navigate = useNavigate();
     useEffect(() => {
         const isLogin = localStorage.getItem("isLoggedIn") === "true";
@@ -14,4 +14,4 @@ function Profile() {
         <ProfileCard />
     )
 }
-export default Profile;
+export default DashBoard;

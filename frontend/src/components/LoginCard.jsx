@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/api";
+import api from "../api/api.js";
 import { loginAccountValidator } from "../../../shared/validator.js"
 
 function LoginCard() {
@@ -47,7 +47,7 @@ function LoginCard() {
             if (req.data.success) {
                 localStorage.setItem("isLoggedIn", "true");
                 localStorage.setItem("username", data.username);
-                navigate("/profile");
+                navigate("/dashboard");
             }
         } catch (error) {
             alert(error.response?.data?.message || "Login failed");
