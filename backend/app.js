@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
+import apiRoutes from "./api/index.js";
+
 const app = express();
 const allowedOrigins = ["http://localhost:5173"];
 
@@ -19,5 +21,6 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use("/", apiRoutes);
 
 export { app };
