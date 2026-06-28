@@ -1,15 +1,15 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import db from "../db.js";
+import db from "../../db.js";
 
-import { loginAccountValidator } from "../../shared/validator.js";
-import { loginLimiter } from "../middleware/rateLimiter.js";
+import { loginAccountValidator } from "../../../shared/validator.js";
+import { loginLimiter } from "../../middleware/rateLimiter.js";
 
 const router = express.Router();
 const pepper = process.env.PEPPER;
 
-router.post("/login", loginLimiter, async (req, res) => {
+router.post("/auth/login", loginLimiter, async (req, res) => {
   const { data, error } = loginAccountValidator.safeParse(req.body);
   console.log("i am from login route ", data);
   console.log("login route test successfully in separate file");
