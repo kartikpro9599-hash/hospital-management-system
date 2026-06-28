@@ -61,7 +61,7 @@ function CreateAccCard() {
         try {
             setstopSpam(true); // i see during security check in console that i tap multiple time submit its a spam
 
-            const req = await api.post(("/create-account"), data);
+            const req = await api.post(("/api/auth/create-account"), data);
             if (req.data.success) {
                 localStorage.setItem("isLoggedIn", "true");
                 localStorage.setItem("username", myFormData.username);

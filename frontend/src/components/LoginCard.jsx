@@ -43,7 +43,7 @@ function LoginCard() {
         //submit the data to backend
         try {
             setstopSpam(true);
-            const req = await api.post(("/login"), data);
+            const req = await api.post(("/api/auth/login"), data);
             if (req.data.success) {
                 localStorage.setItem("isLoggedIn", "true");
                 localStorage.setItem("username", data.username);

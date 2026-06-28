@@ -1,19 +1,12 @@
-import { useNavigate } from "react-router-dom";
+import LogOut from "../components/sub-components/LogoutBtn.sub.jsx"
 function ProfileCard() {
-    const navigate = useNavigate();
     const username = localStorage.getItem("username");
-    const loginType = localStorage.getItem("loginType")
-    function handleLogOut() {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("username");
-        localStorage.removeItem("loginType");
-        localStorage.removeItem("createPatient");
-        navigate("/");
-    }
+    const loginType = localStorage.getItem("loginType");
+
     return (
         <div>
             <h2>welcome {loginType} {username}</h2>
-            <button onClick={handleLogOut}>LogOut</button>
+            <LogOut />
         </div>
     );
 }
