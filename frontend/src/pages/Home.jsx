@@ -8,7 +8,7 @@ function Home() {
     }
 
     return (             
-                <>
+        <>
                     <h1>Please do login</h1>
                     <button onClick={() => handleLogin("patient")}>Login as a Patient</button>
                     <button onClick={() => handleLogin("doctor")}>Login as a Doctor</button>

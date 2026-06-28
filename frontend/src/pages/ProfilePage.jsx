@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import DashBoardCard from "../components/DashboardCard.jsx";
+import ProfileCard from "../components/ProfileCard.jsx";
 import { useNavigate } from "react-router-dom";
 
-function DashBoard() {
+function ProfilePage() {
     const navigate = useNavigate();
     useEffect(() => {
         const isLogin = localStorage.getItem("isLoggedIn") === "true";
@@ -11,7 +11,7 @@ function DashBoard() {
         }
     }, [navigate])
     return (
-        <DashBoardCard />
+        <ProfileCard />
     )
 }
-export default DashBoard;
+export default ProfilePage;

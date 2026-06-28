@@ -9,7 +9,7 @@ function Login() {
         return <Navigate to="/" replace />;
     }
     if (isLogIn) {
-        return <Navigate to="/profile" replace />
+        return <Navigate to="/dashboard" replace />
     }
 
     return <LoginCard />;
