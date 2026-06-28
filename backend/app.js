@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
 import apiRoutes from "./api/index.js";
 
 const app = express();
@@ -19,8 +18,9 @@ app.use(
     },
   }),
 );
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/", apiRoutes);
+app.use("/api", apiRoutes);
 
 export { app };

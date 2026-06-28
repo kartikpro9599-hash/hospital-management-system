@@ -7,14 +7,15 @@ Using these queries, we will design and build the complete backend database stru
 
 /* create table name 'patient' and their schema*/
 
-/*
+
 CREATE TABLE patient (
     id SERIAL PRIMARY KEY,
 
     fName VARCHAR(20) NOT NULL,
     lName VARCHAR(20) NOT NULL,
 
-    username VARCHAR(30) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+        CHECK (username ~ '^[A-Za-z0-9_]+$'),
 
     age INT NOT NULL
         CHECK (age BETWEEN 1 AND 150),
@@ -27,7 +28,7 @@ CREATE TABLE patient (
 
     email VARCHAR(60) UNIQUE NOT NULL,
 
-    password VARCHAR(300) NOT NULL
+    password VARCHAR(500) NOT NULL
 );
-*/
+
 
