@@ -44,7 +44,7 @@ export const createAccountValidator = z
       .string()
       .trim()
       .regex(/^[6-9][0-9]{9}$/, {
-        message: "Invalid phone number or do not use space",
+        message: "Invalid phone number",
       }),
 
     email: z.email({ message: "please enter the correct email" }),

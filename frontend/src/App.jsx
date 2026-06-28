@@ -4,6 +4,8 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import CreateAccPage from "./pages/CreateAccount.jsx";
 import DashBoard from "./pages/DashBoard.jsx";
+import BookedAppointment from "./pages/BookedAppointment.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 function App() {
   return (
@@ -26,6 +28,22 @@ function App() {
           element={
             <ProtectedRoute>
               <DashBoard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/booked"
+          element={
+            <ProtectedRoute>
+              <BookedAppointment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
