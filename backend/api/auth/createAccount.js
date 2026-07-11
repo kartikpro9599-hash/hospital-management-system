@@ -69,20 +69,35 @@ createAccountRoute.post(
           hash,
         ],
       );
-      const token = jwt.sign({ username: data.username }, process.env.JWTSIGN, {
-        expiresIn: "5m",
-      });
-
+      const refreshToken = jwt.sign(
+        { username: data.username },
+        process.env.JWTSIGN_REFRESH,
+        {
+          expiresIn: "1h",
+        },
+      );
+      const accessToken = jwt.sign(
+        { username: data.username },
+        process.env.JWTSIGN_ACCESS,
+        {
+          expiresIn: "15m",
+        },
+      );
       return res
-        .cookie("token", token, {
+        .cookie("token", refreshToken, {
           httpOnly: true,
           sameSite: "lax",
-          maxAge: 60 * 5000,
+          maxAge: 60 * 1000 * 60,
         })
         .status(201)
         .json({
           success: true,
+          token: accessToken,
           message: "Account Created Succesfully",
+          user: {
+            fName: data.fName,
+            lName: data.lName,
+          },
         });
     } catch (error) {
       return res.status(500).json({

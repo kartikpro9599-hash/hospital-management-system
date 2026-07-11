@@ -10,13 +10,11 @@ const router = express.Router();
 const pepper = process.env.PEPPER;
 
 router.post("/auth/login", loginLimiter, async (req, res) => {
+  console.log(req.body);
   const { data, error } = loginAccountValidator.safeParse(req.body);
-  console.log("i am from login route ", data);
-  console.log("login route test successfully in separate file");
+
   if (error) {
-    console.log(
-      "wrong portal login or user trying to manipulate browsers local storage",
-    );
+    console.log("user trying to manipulate browser frontend logic");
     return res.status(400).json({
       success: false,
       message: error.issues[0].message,
@@ -24,7 +22,7 @@ router.post("/auth/login", loginLimiter, async (req, res) => {
   }
   try {
     const result = await db.query(
-      "SELECT password FROM patient where username = $1",
+      "SELECT fName, lName, password FROM patient where username = $1",
       [data.username],
     );
     if (!result.rowCount) {
@@ -40,24 +38,40 @@ router.post("/auth/login", loginLimiter, async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Password is incorrect",
+        message: "Username or Password is incorrect",
       });
     }
 
-    const token = jwt.sign({ username: data.username }, process.env.JWTSIGN, {
-      expiresIn: "5m",
-    });
+    const refreshToken = jwt.sign(
+      { username: data.username },
+      process.env.JWTSIGN_REFRESH,
+      {
+        expiresIn: "1h",
+      },
+    );
+    const accessToken = jwt.sign(
+      { username: data.username },
+      process.env.JWTSIGN_ACCESS,
+      {
+        expiresIn: "15m",
+      },
+    );
 
     return res
-      .cookie("token", token, {
+      .cookie("token", refreshToken, {
         httpOnly: true,
         sameSite: "lax",
-        maxAge: 60 * 5000,
+        maxAge: 60 * 1000 * 60,
       })
       .status(200)
       .json({
         success: true,
+        token: accessToken,
         message: "login successful",
+        user: {
+          fName: result.rows[0].fName,
+          lName: result.rows[0].lName,
+        },
       });
   } catch (error) {
     console.log("error from login pipeline : ", error);
