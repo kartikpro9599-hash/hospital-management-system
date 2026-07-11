@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/api.js";
 import { loginAccountValidator } from "../../../shared/validator.js"
+import Back from "./sub-components/BackBtn.sub.jsx";
+import { useAuth } from "../routes/useAuth.js";
 
 function LoginCard() {
     const navigate = useNavigate();
@@ -11,7 +13,8 @@ function LoginCard() {
         password: ""
     };
     const [myForm, setMyForm] = useState(initialFormValue);
-    const loginType = localStorage.getItem("loginType");
+    const { loginType } = useParams();
+    const { login } = useAuth();
 
     function handleChange(e) {
         //hooks of username and password
@@ -45,8 +48,7 @@ function LoginCard() {
             setstopSpam(true);
             const req = await api.post(("/api/auth/login"), data);
             if (req.data.success) {
-                localStorage.setItem("isLoggedIn", "true");
-                localStorage.setItem("username", data.username);
+                login(req.data.user)
                 navigate("/dashboard");
             }
         } catch (error) {
@@ -83,7 +85,7 @@ function LoginCard() {
                         onChange={handleChange}
                     />
                 </div>
-                {!stopSpam && <button type="button" onClick={() => navigate("/")}>cancel</button>}
+                <Back />
                 <button type="submit" disabled={stopSpam}>{stopSpam ? "Checking your credentials" : "submit"}</button>
                 {loginType === "patient" && <button type="button" onClick={createAcc}>Create an account</button>}
             </form>
