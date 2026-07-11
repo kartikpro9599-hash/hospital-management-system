@@ -2,16 +2,18 @@ import express from "express";
 import db from "../db.js";
 import auth from "../middleware/authorised.js";
 
+import { globalRateLimiter } from "../middleware/rateLimiter.js";
+
 const findMe = express.Router();
 
-findMe.get("/me", auth, async (req, res) => {
+findMe.get("/me", globalRateLimiter, auth, async (req, res) => {
   try {
     const user = await db.query(
       "SELECT fName, lName from patient where username = $1",
       [req.user.username],
     );
     if (user.rowCount === 0) {
-      return res.status(200).json({
+      return res.status(404).json({
         success: false,
         message: "user not found",
       });

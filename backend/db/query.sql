@@ -116,3 +116,66 @@ CREATE TABLE doctors (
         REFERENCES departments(id)
         ON DELETE RESTRICT
 );
+
+/*create services table */
+
+CREATE TABLE services (
+    id SERIAL PRIMARY KEY,
+    service_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+/* Ask cluade ai to give a list of hospital services */
+
+INSERT INTO services (service_name)
+values 
+        ('X-Ray'),
+        ('MRI Scan'),
+        ('CT Scan'),
+        ('Ultrasound'),
+        ('Mammography'),
+        ('PET Scan'),
+        ('Bone Density Test'),
+        ('ECG'),
+        ('ECHO'),
+        ('EEG'),
+        ('Endoscopy'),
+        ('Colonoscopy'),
+        ('Doppler Test'),
+        ('Blood Test'),
+        ('Urine Test'),
+        ('Stool Test'),
+        ('Biopsy'),
+        ('Allergy Test'),
+        ('Pathology Test'),
+        ('COVID-19 Test'),
+        ('Pregnancy Test'),
+        ('Blood Donation'),
+        ('Blood Transfusion'),
+        ('Blood Bank Service'),
+        ('Plasma Donation'),
+        ('Physiotherapy'),
+        ('Chemotherapy'),
+        ('Radiotherapy'),
+        ('Dialysis'),
+        ('Vaccination'),
+        ('Minor Surgery'),
+        ('Major Surgery'),
+        ('Organ Transplant'),
+        ('Ambulance Service'),
+        ('Emergency Care'),
+        ('ICU Service'),
+        ('Trauma Care'),
+        ('Normal Delivery'),
+        ('C-Section Delivery'),
+        ('Prenatal Checkup'),
+        ('Postnatal Care'),
+        ('Doctor Consultation'),
+        ('Full Body Health Checkup'),
+        ('Eye Checkup'),
+        ('Dental Checkup'),
+        ('Nursing Care'),
+        ('Home Care Service'),
+        ('Rehabilitation Service'),
+        ('Pharmacy Service'),
+        ('Health Counseling');
+

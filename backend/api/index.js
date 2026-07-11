@@ -4,10 +4,10 @@ import findMe from "./me.js";
 import loginRoute from "./auth/login.js";
 import createAccountRoute from "./auth/createAccount.js";
 
-const router = express.Router();
+const apiRoutes = express.Router();
 
-router.use(loginRoute);
-router.use(createAccountRoute);
-router.use(findMe);
+apiRoutes.use(loginRoute);
+apiRoutes.use(createAccountRoute);
+apiRoutes.use(findMe);
 
-export default router;
+export default apiRoutes;
