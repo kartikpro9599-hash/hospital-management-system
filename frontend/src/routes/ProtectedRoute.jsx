@@ -1,46 +1,11 @@
-import { Navigate } from "react-router-dom";
-import api from "../api/api.js";
-import { useEffect, useState } from "react";
-import { HashLoader } from "react-spinners";
+// ProtectedRoute.js
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from './useAuth.js';
 
-function ProtectedRoute({ children }) {
-    const [loading, setLoading] = useState(true);
-    const [auth, setAuth] = useState(false);
+export const ProtectedRoute = () => {
+    const { user, loading } = useAuth();
 
-    useEffect(() => {
-        const checkingUser = async () => {
-            try {
-                const req = await api.get("/api/me");
-                if (req.data.success) {
-                    setAuth(true)
-                } else {
-                    setAuth(false);
-                }
-            } catch (error) {
-                console.log("user is not signed in", error);
-                setAuth(false);
-            } finally {
-                setLoading(false);
-            }
-        };
-        checkingUser();
-    }, [])
-    if (loading) {
-        //search for spinner animation
-        return (<div style={{
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
-        }}>
-            <HashLoader />
-        </div>
-        );
-    }
-    if (!auth) {
-        <Navigate to="/" replace />
-    }
+    if (loading) return <div>Loading session...</div>; // Prevents premature redirection
 
-    return children;
-}
-export default ProtectedRoute;
+    return user ? <Outlet /> : <Navigate to="/" replace />;
+};
