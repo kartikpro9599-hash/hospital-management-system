@@ -52,6 +52,7 @@ export const createAccountValidator = z
     password: z
       .string()
       .min(8, { message: "password must contain at least 8 letters" })
+      .max(40, { message: "password is cant greater than 40 letters" })
       .regex(
         /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&^#()_+\-=[\]{};':"\\|,.<>/?]{8,}$/,
         { message: "Password must contain uppercase, lowercase and a number" },
@@ -59,7 +60,8 @@ export const createAccountValidator = z
 
     cnfPassword: z
       .string()
-      .min(8, { message: "password must contain at least 8 letters" }),
+      .min(8, { message: "password must contain at least 8 letters" })
+      .max(40, { message: "password is cant greater than 40 letters" }),
   })
   .refine((data) => data.password === data.cnfPassword, {
     message: "Passwords does not match",
@@ -78,11 +80,12 @@ export const loginAccountValidator = z.object({
   password: z
     .string()
     .min(8, { message: "password must contain at least 8 letters" })
+    .max(40, { message: "password is cant greater than 40 letters" })
     .regex(
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&^#()_+\-=[\]{};':"\\|,.<>/?]{8,}$/,
       { message: "username or Password is incorrrect" },
     ),
   loginType: z.enum(["patient", "doctor", "admin"], {
-    message: "Please do not change the Local Storage",
+    message: "Invalid Login Type",
   }),
 });
