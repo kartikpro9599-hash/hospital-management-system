@@ -14,6 +14,7 @@ createAccountRoute.post(
   "/auth/create-account",
   loginLimiter,
   async (req, res) => {
+
     const { data, error } = createAccountValidator.safeParse(req.body);
 
     if (error) {
@@ -32,9 +33,10 @@ createAccountRoute.post(
           "email is invalid please use personal email providers like google, live, yahoo, etc",
       });
     }
+
     try {
       const result = await db.query(
-        "SELECT username,email,phoneNo FROM patient where username = $1 OR email = $2 OR phoneNo= $3 ",
+        "SELECT username,email,phoneNo FROM patients where username = $1 OR email = $2 OR phoneNo= $3 ",
         [data.username, data.email, data.phoneNo],
       );
       if (result.rowCount > 0) {
@@ -56,8 +58,9 @@ createAccountRoute.post(
       const hash = await bcrypt.hash(data.password + pepper, 10);
       console.log("account creation request true");
 
-      await db.query(
-        "INSERT INTO patient(fName,lName,username,age,gender,phoneNo,email,password) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+      await db.query("BEGIN");
+      const patientId = await db.query(
+        "INSERT INTO patients(fName,lName,username,age,gender,phoneNo,email,password) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id",
         [
           data.fName,
           data.lName,
@@ -69,13 +72,26 @@ createAccountRoute.post(
           hash,
         ],
       );
+      console.log(patientId.rows[0].id);
+
       const refreshToken = jwt.sign(
-        { username: data.username },
+        {
+          userid: patientId.rows[0].id,
+          userType: "patient",
+          username: data.username,
+        },
         process.env.JWTSIGN_REFRESH,
         {
           expiresIn: "1h",
         },
       );
+      await db.query(
+        "INSERT INTO refreshtokens(userid, usertype, token) VALUES ($1,'patient',$2)",
+        [patientId.rows[0].id, refreshToken],
+      );
+
+      await db.query("COMMIT");
+
       const accessToken = jwt.sign(
         { username: data.username },
         process.env.JWTSIGN_ACCESS,
@@ -100,6 +116,7 @@ createAccountRoute.post(
           },
         });
     } catch (error) {
+      await db.query("ROLLBACK");
       return res.status(500).json({
         success: false,
         message: "Registration failed due to an internal server error",

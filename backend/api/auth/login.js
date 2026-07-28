@@ -6,11 +6,10 @@ import db from "../../db.js";
 import { loginAccountValidator } from "../../../shared/validator.js";
 import { loginLimiter } from "../../middleware/rateLimiter.js";
 
-const router = express.Router();
+const loginRoute = express.Router();
 const pepper = process.env.PEPPER;
 
-router.post("/auth/login", loginLimiter, async (req, res) => {
-  console.log(req.body);
+loginRoute.post("/auth/login", loginLimiter, async (req, res) => {
   const { data, error } = loginAccountValidator.safeParse(req.body);
 
   if (error) {
@@ -21,8 +20,23 @@ router.post("/auth/login", loginLimiter, async (req, res) => {
     });
   }
   try {
+    const whiteListUserType = {
+      patient: "patients",
+      doctor: "doctors",
+      admin: "admins",
+    };
+
+    const type = whiteListUserType[data.loginType]; //lookup by key name in whiteListUser object
+
+    if (!type) {
+      return res.status(400).json({
+        success: false,
+        message: "Broken link or invalid User Login type",
+      });
+    }
+
     const result = await db.query(
-      "SELECT fName, lName, password FROM patient where username = $1",
+      `SELECT id, fName, lName, password FROM ${type} where username = $1`,
       [data.username],
     );
     if (!result.rowCount) {
@@ -42,20 +56,34 @@ router.post("/auth/login", loginLimiter, async (req, res) => {
       });
     }
 
+    // refresh token making
     const refreshToken = jwt.sign(
-      { username: data.username },
+      {
+        userid: result.rows[0].id,
+        userType: data.loginType,
+        username: data.username,
+      },
       process.env.JWTSIGN_REFRESH,
       {
         expiresIn: "1h",
       },
     );
-    const accessToken = jwt.sign(
-      { username: data.username },
-      process.env.JWTSIGN_ACCESS,
-      {
-        expiresIn: "15m",
-      },
+
+    // refresh token store check whether same user is already login or not if yes then remove it and change new token
+
+    await db.query(
+      "INSERT INTO refreshtokens (userid, usertype, token) VALUES ($1, $2, $3) ON CONFLICT (userid, usertype) DO UPDATE SET token = EXCLUDED.token",
+      [result.rows[0].id, data.loginType, refreshToken],
     );
+
+    // access token making
+    // const accessToken = jwt.sign(
+    //   { username: data.username },
+    //   process.env.JWTSIGN_ACCESS,
+    //   {
+    //     expiresIn: "15m",
+    //   },
+    // );
 
     return res
       .cookie("token", refreshToken, {
@@ -66,11 +94,12 @@ router.post("/auth/login", loginLimiter, async (req, res) => {
       .status(200)
       .json({
         success: true,
-        token: accessToken,
         message: "login successful",
+        // token: accessToken,
         user: {
           fName: result.rows[0].fName,
           lName: result.rows[0].lName,
+          username: data.username,
         },
       });
   } catch (error) {
@@ -82,4 +111,4 @@ router.post("/auth/login", loginLimiter, async (req, res) => {
   }
 });
 
-export default router;
+export default loginRoute;
