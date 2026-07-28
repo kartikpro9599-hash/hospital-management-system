@@ -8,9 +8,9 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // 1. Check if the error is a 401
+    // Check if the error is a 401
     if (error.response?.status === 401) {
-      if (error.config.url.includes("/api/me")) {
+      if (error.config.url?.endsWith("/api/me")) {
         return Promise.reject(error);
       }
       console.warn(
