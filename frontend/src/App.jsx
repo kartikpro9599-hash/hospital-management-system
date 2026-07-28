@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./routes/AuthProvider.jsx";
+import AuthProvider from "./routes/AuthProvider.jsx";
 import { PublicOnlyRoute } from "./routes/PublicRoute.jsx";
 import { ProtectedRoute } from "./routes/ProtectedRoute.jsx";
 
