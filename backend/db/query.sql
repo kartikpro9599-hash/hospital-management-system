@@ -7,7 +7,7 @@ Using these queries, we will design and build the complete backend database stru
 /* create table name 'patient' and their schema*/
 
 
-CREATE TABLE patient (
+CREATE TABLE patients (
     id SERIAL PRIMARY KEY,
 
     fName VARCHAR(20) NOT NULL,
@@ -31,72 +31,18 @@ CREATE TABLE patient (
 );
 
 
-/* create department table */
-
-CREATE TABLE departments (
-    id SERIAL PRIMARY KEY,
-    department_name VARCHAR(100) NOT NULL UNIQUE
-);
-
-/* Ask cluade ai to give a list of hospital department */
-INSERT INTO departments (department_name)
-VALUES
-        ('Emergency Department (ED / A&E)'),
-        ('Intensive Care Unit (ICU)'),
-        ('Neonatal Intensive Care Unit (NICU)'),
-        ('Pediatric Intensive Care Unit (PICU)'),
-        ('General Medicine'),
-        ('General Surgery'),
-        ('Cardiology'),
-        ('Cardiac Surgery'),
-        ('Neurology'),
-        ('Neurosurgery'),
-        ('Orthopedics'),
-        ('Oncology'),
-        ('Radiation Oncology'),
-        ('Hematology'),
-        ('Gynecology & Obstetrics (OB/GYN)'),
-        ('Neonatology'),
-        ('Pediatrics'),
-        ('Dermatology'),
-        ('Ophthalmology'),
-        ('ENT (Ear Nose & Throat / Otolaryngology)'),
-        ('Urology'),
-        ('Nephrology'),
-        ('Gastroenterology'),
-        ('Hepatology'),
-        ('Pulmonology / Respiratory Medicine'),
-        ('Endocrinology'),
-        ('Rheumatology'),
-        ('Psychiatry & Mental Health'),
-        ('Psychology'),
-        ('Anesthesiology'),
-        ('Pathology'),
-        ('Radiology & Imaging'),
-        ('Nuclear Medicine'),
-        ('Plastic & Reconstructive Surgery'),
-        ('Vascular Surgery'),
-        ('Colorectal Surgery'),
-        ('Maxillofacial Surgery'),
-        ('Transplant Surgery'),
-        ('Physiotherapy & Rehabilitation'),
-        ('Occupational Therapy'),
-        ('Speech & Language Therapy'),
-        ('Pharmacy'),
-        ('Dietetics & Nutrition'),
-        ('Social Work'),
-        ('Palliative Care'),
-        ('Blood Bank & Transfusion'),
-        ('Microbiology & Infectious Disease'),
-        ('Immunology & Allergy'),
-        ('Forensic Medicine'),
-        ('Medical Records & Health Information');
 
 /* create doctors table */
 
 CREATE TABLE doctors (
     id SERIAL PRIMARY KEY,
-    fullname VARCHAR(60) NOT NULL,
+    
+    fName VARCHAR(20) NOT NULL,
+    lName VARCHAR(20) NOT NULL,
+
+    username VARCHAR(50) UNIQUE NOT NULL,
+        CHECK (username ~ '^[A-Za-z0-9_]+$'),
+
     age INT NOT NULL
         CHECK (age BETWEEN 25 AND 80),
     gender VARCHAR(11) NOT NULL
@@ -117,12 +63,23 @@ CREATE TABLE doctors (
         ON DELETE RESTRICT
 );
 
+/* refresh token check */
+
+CREATE TABLE refreshtokens (
+    userid INT NOT NULL,
+    usertype VARCHAR(11) NOT NULL
+        CHECK (usertype IN ('patient', 'doctor', 'admin')),
+    token VARCHAR(1000) NOT NULL,
+    PRIMARY KEY (userid, usertype)
+);
+
 /*create services table */
 
 CREATE TABLE services (
     id SERIAL PRIMARY KEY,
-    service_name VARCHAR(100) NOT NULL UNIQUE
-);
+    service_name VARCHAR(100) NOT NULL UNIQUE );
+
+
 
 /* Ask cluade ai to give a list of hospital services */
 
@@ -179,3 +136,62 @@ values
         ('Pharmacy Service'),
         ('Health Counseling');
 
+/* create department table */
+
+CREATE TABLE departments (
+    id SERIAL PRIMARY KEY,
+    department_name VARCHAR(100) NOT NULL UNIQUE );
+
+/* Ask cluade ai to give a list of hospital department */
+INSERT INTO departments (department_name)
+VALUES
+        ('Emergency Department (ED / A&E)'),
+        ('Intensive Care Unit (ICU)'),
+        ('Neonatal Intensive Care Unit (NICU)'),
+        ('Pediatric Intensive Care Unit (PICU)'),
+        ('General Medicine'),
+        ('General Surgery'),
+        ('Cardiology'),
+        ('Cardiac Surgery'),
+        ('Neurology'),
+        ('Neurosurgery'),
+        ('Orthopedics'),
+        ('Oncology'),
+        ('Radiation Oncology'),
+        ('Hematology'),
+        ('Gynecology & Obstetrics (OB/GYN)'),
+        ('Neonatology'),
+        ('Pediatrics'),
+        ('Dermatology'),
+        ('Ophthalmology'),
+        ('ENT (Ear Nose & Throat / Otolaryngology)'),
+        ('Urology'),
+        ('Nephrology'),
+        ('Gastroenterology'),
+        ('Hepatology'),
+        ('Pulmonology / Respiratory Medicine'),
+        ('Endocrinology'),
+        ('Rheumatology'),
+        ('Psychiatry & Mental Health'),
+        ('Psychology'),
+        ('Anesthesiology'),
+        ('Pathology'),
+        ('Radiology & Imaging'),
+        ('Nuclear Medicine'),
+        ('Plastic & Reconstructive Surgery'),
+        ('Vascular Surgery'),
+        ('Colorectal Surgery'),
+        ('Maxillofacial Surgery'),
+        ('Transplant Surgery'),
+        ('Physiotherapy & Rehabilitation'),
+        ('Occupational Therapy'),
+        ('Speech & Language Therapy'),
+        ('Pharmacy'),
+        ('Dietetics & Nutrition'),
+        ('Social Work'),
+        ('Palliative Care'),
+        ('Blood Bank & Transfusion'),
+        ('Microbiology & Infectious Disease'),
+        ('Immunology & Allergy'),
+        ('Forensic Medicine'),
+        ('Medical Records & Health Information');
